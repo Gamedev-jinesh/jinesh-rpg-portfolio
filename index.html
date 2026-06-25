@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinesh Raikangor | Game Designer & Developer RPG Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <audio id="coin-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+    <audio id="select-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="level-up" src="https://assets.mixkit.co/active_storage/sfx/2703/2703-preview.mp3"></audio>
+
+    <div id="start-screen" class="arcade-screen">
+        <div class="start-content animate-float">
+            <span class="pixel-sub animate-blink">INSERT COIN / PRESS START</span>
+            <h1>JINESH RAIKANGOR</h1>
+            <p>Game Designer & Studio Director</p>
+            <button id="start-btn" class="arcade-btn"><i class="fa-solid fa-gamepad"></i> START GAME</button>
+        </div>
+    </div>
+
+    <div id="main-hub" class="main-hub hidden animate-fade-in">
+        
+        <header class="hud-header pixel-box">
+            <div class="hud-item player-tag"><i class="fa-solid fa-user"></i> LVL: Dev Director</div>
+            
+            <div class="hud-item xp-container">
+                <span class="xp-label">XP:</span>
+                <div class="xp-bar-bg">
+                    <div id="xp-fill" class="xp-bar-fill" style="width: 0%;"></div>
+                </div>
+                <span id="xp-counter" class="xp-num">0%</span>
+            </div>
+
+            <div class="hud-item health">
+                <i class="fa-solid fa-heart" style="color: #ff3b30;"></i>
+                <i class="fa-solid fa-heart" style="color: #ff3b30;"></i>
+                <i class="fa-solid fa-heart" style="color: #ff3b30;"></i>
+            </div>
+        </header>
+
+        <main class="level-grid">
+            
+            <div class="level-node pixel-box" onclick="activateSection('profile-node', 'profile-modal')">
+                <div class="node-icon"><i class="fa-solid fa-id-card"></i></div>
+                <h3>PLAYER STATS (CV)</h3>
+                <span id="profile-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node special-node pixel-box" onclick="activateSection('pitch-node', 'pitch-modal')">
+                <div class="node-icon"><i class="fa-solid fa-clapperboard"></i></div>
+                <h3>PITCH / INTRO DECK</h3>
+                <span id="pitch-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('xp-node', 'xp-modal')">
+                <div class="node-icon"><i class="fa-solid fa-timeline"></i></div>
+                <h3>QUEST LOG (XP)</h3>
+                <span id="xp-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('games-node', 'games-modal')">
+                <div class="node-icon"><i class="fa-solid fa-headset"></i></div>
+                <h3>INVENTORY (IPs)</h3>
+                <span id="games-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('gallery-node', 'gallery-modal')">
+                <div class="node-icon"><i class="fa-solid fa-images"></i></div>
+                <h3>DESIGN GALLERY</h3>
+                <span id="gallery-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('podcast-node', 'podcast-modal')">
+                <div class="node-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                <h3>THE PODCAST</h3>
+                <span id="podcast-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('certs-node', 'certs-modal')">
+                <div class="node-icon"><i class="fa-solid fa-award"></i></div>
+                <h3>ACHIEVEMENTS</h3>
+                <span id="certs-node" class="node-status">LOCKED</span>
+            </div>
+
+            <div class="level-node pixel-box" onclick="activateSection('test-node', 'test-modal')">
+                <div class="node-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                <h3>TAVERN (NPCs)</h3>
+                <span id="test-node" class="node-status">LOCKED</span>
+            </div>
+
+        </main>
+
+        <footer class="arcade-footer pixel-box">
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/jinesh-raikangor" target="_blank" class="social-icon" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:jineshraikangor88@gmail.com" class="social-icon" title="Email"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+            <button onclick="openModal('contact-modal')" class="arcade-btn-alt"><i class="fa-solid fa-envelope"></i> TRANSMIT MESSAGE</button>
+        </footer>
+
+    </div>
+
+    <div id="profile-modal" class="modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeModal('profile-modal')">&times;</span>
+            <h2><i class="fa-solid fa-user"></i> Player Profile (CV)</h2>
+            <div class="profile-content">
+                <img src="public/Images/profile.jpg" alt="Jinesh Raikangor" class="profile-img">
+                <div class="profile-text">
+                    <p>Impact-driven social entrepreneur and game developer with a proven track record in creating purpose-led, culturally immersive games.</p>
+                    <p>Founder of GameChangersIndia, combining game design with social innovation. Official Xbox Partner.</p>
+                    <a href="path_to_your_cv.pdf" download="Jinesh_Raikangor_CV.pdf" class="arcade-btn" style="margin-top:20px; display:inline-block;"><i class="fa-solid fa-download"></i> GET RESUME</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pitch-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('pitch-modal')">&times;</span>
+            <h2><i class="fa-solid fa-clapperboard"></i> Intro / Pitch Cutscene</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="Pitch Trailer Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="xp-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('xp-modal')">&times;</span>
+            <h2><i class="fa-solid fa-timeline"></i> Quest Log (Experience Timeline)</h2>
+            <div class="timeline-grid">
+                <div class="timeline-card pixel-box">
+                    <h4>Founder</h4>
+                    <h5>Desi Woofs Studios | Feb 2024 - Present</h5>
+                    <p>Visionary initiative dedicated to crafting games with a social impact.</p>
+                </div>
+                <div class="timeline-card pixel-box">
+                    <h4>Community Manager (Internship)</h4>
+                    <h5>Bornmonkie | Mar 2023 - May 2023</h5>
+                    <p>Public Relations & CRM.</p>
+                </div>
+                <div class="timeline-card pixel-box">
+                    <h4>Game Designer & Content Creator (Internship)</h4>
+                    <h5>Gamestacy | Nov 2022 - Mar 2023</h5>
+                    <p>Contributed to Influenzer and Boom Ball (1M+ downloads).</p>
+                </div>
+                <div class="timeline-card pixel-box">
+                    <h4>Live Streaming & Podcast</h4>
+                    <h5>Crater.Club | Sep 2022 - Mar 2023</h5>
+                </div>
+                <div class="timeline-card pixel-box">
+                    <h4>Podcaster & Founder</h4>
+                    <h5>Gamedev Show | Jun 2020 - Present</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="games-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('games-modal')">&times;</span>
+            <h2><i class="fa-solid fa-headset"></i> Shipped Games Inventory</h2>
+            <div class="game-grid">
+                <div class="game-card pixel-box" onclick="openSubMenu('sermon-sub')">
+                    <img src="public/Images/image (1).png" alt="Sermon">
+                    <p>📖 <strong>Sermon</strong> (Horror Demo)</p>
+                </div>
+                <div class="game-card pixel-box" onclick="openSubMenu('desi-sub')">
+                    <img src="public/Images/doogies.jpg" alt="Desi Woofs">
+                    <p>🐾 <strong>Desi Woofs</strong> (Co-op Puzzles)</p>
+                </div>
+                <div class="game-card pixel-box" onclick="openSubMenu('boom-sub')">
+                    <img src="public/Images/game 3.png" alt="Boom Ball">
+                    <p>🔴 <strong>Boom Ball</strong> (1M+ downloads)</p>
+                </div>
+                <div class="game-card pixel-box" onclick="openSubMenu('inf-sub')">
+                    <img src="public/Images/game 5.png" alt="Influenzer">
+                    <p>📱 <strong>Influenzer</strong> (Social Media)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('gallery-modal')">&times;</span>
+            <h2><i class="fa-solid fa-images"></i> Design & Work Gallery</h2>
+            <div class="gallery-grid">
+                <div class="gal-item pixel-box" onclick="openLightbox('public/Images/mascot.jpg')">
+                    <img src="public/Images/mascot.jpg" alt="Mascot Art">
+                    <p>Mascot Concept</p>
+                </div>
+                <div class="gal-item pixel-box" onclick="openLightbox('public/Images/rickshaw.png')">
+                    <img src="public/Images/rickshaw.png" alt="Rickshaw Design">
+                    <p>Auto Rickshaw Asset</p>
+                </div>
+                <div class="gal-item pixel-box" onclick="openLightbox('public/Images/Raja.png')">
+                    <img src="public/Images/Raja.png" alt="Raja Art">
+                    <p>Raja Design Work</p>
+                </div>
+                <div class="gal-item pixel-box" onclick="openLightbox('public/Images/Gullu.png')">
+                    <img src="public/Images/Gullu.png" alt="Gullu Character">
+                    <p>Gullu Character Model</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sermon-sub" class="modal sub-modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeSubMenu('sermon-sub')">&times;</span>
+            <h2>📖 Sermon (Psychological Horror)</h2>
+            <div class="screenshot-slider">
+                <img src="public/Images/WRET.png" alt="Sermon Environment" onclick="openLightbox(this.src)">
+                <img src="public/Images/Sermon.png" alt="Sermon UI" onclick="openLightbox(this.src)">
+            </div>
+            <a href="https://troj4nblazing.itch.io/sermon" target="_blank" class="arcade-btn" style="font-size: 0.65rem; margin-top: 20px;">PLAY DEMO ON ITCH.IO</a>
+        </div>
+    </div>
+
+    <div id="desi-sub" class="modal sub-modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeSubMenu('desi-sub')">&times;</span>
+            <h2>🐾 Desi Woofs (Co-Op Adventure)</h2>
+            <div class="screenshot-slider">
+                <img src="public/Images/Screenshot 2026-03-20 154927.png" alt="Desi Woofs Concept" onclick="openLightbox(this.src)">
+                <img src="public/Images/Screenshot 2026-03-26 162558.png" alt="Desi Woofs Street" onclick="openLightbox(this.src)">
+                <img src="public/Images/Screenshot 2026-03-26 163345.png" alt="Desi Woofs Scene" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+    </div>
+
+    <div id="boom-sub" class="modal sub-modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeSubMenu('boom-sub')">&times;</span>
+            <h2>🔴 Boom Ball</h2>
+            <div class="screenshot-slider">
+                <img src="public/Images/game 3.png" alt="Boom ball gameplay" onclick="openLightbox(this.src)">
+            </div>
+            <p style="font-size: 1.2rem; margin-top:15px;">Achieved 1 Million+ Downloads globally.</p>
+        </div>
+    </div>
+
+    <div id="inf-sub" class="modal sub-modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeSubMenu('inf-sub')">&times;</span>
+            <h2>📱 Influenzer: Social Media</h2>
+            <div class="screenshot-slider">
+                <img src="public/Images/game 5.png" alt="Influenzer menu" onclick="openLightbox(this.src)">
+            </div>
+            <p style="font-size: 1.2rem; margin-top:15px;">Co-developed alongside publisher Kwalee.</p>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" class="modal lightbox-backdrop" onclick="closeLightbox()">
+        <span class="close-btn" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-img-content" src="" alt="Enlarged Visual">
+    </div>
+
+    <div id="podcast-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('podcast-modal')">&times;</span>
+            <h2><i class="fa-solid fa-microphone-lines"></i> The Indian GameDev Show</h2>
+            <p style="font-size:1.2rem;">India's premier games industry podcast featuring global gaming leaders.</p>
+            <div class="podcast-videos">
+                <iframe width="100%" height="250" src="https://www.youtube.com/embed/jfB5p1pndg8" title="Podcast Episode" frameborder="0" allowfullscreen></iframe>
+                <iframe width="100%" height="250" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Podcast Episode 2" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top:20px;">
+               <img src="public/Images/podcast 2.jpg" style="width: 45%; border: 2px solid #0f0;" onclick="openLightbox(this.src)">
+               <img src="public/Images/podcast 4.jpg" style="width: 45%; border: 2px solid #0f0;" onclick="openLightbox(this.src)">
+            </div>
+        </div>
+    </div>
+
+    <div id="certs-modal" class="modal">
+        <div class="modal-content pixel-box wide-modal animate-pop">
+            <span class="close-btn" onclick="closeModal('certs-modal')">&times;</span>
+            <h2><i class="fa-solid fa-award"></i> Certificates & International Stages</h2>
+            <div class="certs-grid">
+                <div class="cert-item pixel-box" onclick="openLightbox('public/Images/DESI WOOF - A COOP GAME - EXPERT .png')">
+                    <img src="public/Images/DESI WOOF - A COOP GAME - EXPERT .png" alt="Games For Change Finalist">
+                    <p>G4C Finalist Certificate</p>
+                </div>
+                <div class="cert-item pixel-box" onclick="openLightbox('public/Images/SXSW 2.jpg')">
+                    <img src="public/Images/SXSW 2.jpg" alt="SXSW Sydney Panel">
+                    <p>SXSW Sydney Stage Panel</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="test-modal" class="modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeModal('test-modal')">&times;</span>
+            <h2><i class="fa-solid fa-comment-dots"></i> NPC Validation / Testimonials</h2>
+            <blockquote>
+                <p>"Jinesh is a dynamic young entrepreneur and a rising star in India's game development community..."</p>
+                <footer>— Tania Hack, Senior Director of International Partnerships, Games for Change</footer>
+            </blockquote>
+            <blockquote>
+                <p>"Personally appreciated by the CEO of Twitch during SXSW; received validation for my startup..."</p>
+                <footer>— CEO of Twitch</footer>
+            </blockquote>
+            <div style="text-align:center; margin-top:20px;">
+                <img src="public/Images/tania.jpeg" alt="Tania Hack" style="width: 100px; height:100px; border-radius:50%; border: 4px solid #00ff66;">
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="modal">
+        <div class="modal-content pixel-box animate-pop">
+            <span class="close-btn" onclick="closeModal('contact-modal')">&times;</span>
+            <h2><i class="fa-solid fa-envelope"></i> Transmit Transmission</h2>
+            <form class="contact-form" onsubmit="alert('TRANSMISSION RECEIVED. CONTROLLER WILL REPLY SHORTLY!'); closeModal('contact-modal'); return false;">
+                <input type="text" placeholder="ENTER CALLSIGN/NAME" required>
+                <input type="email" placeholder="ENTER TRANSMITTER FREQUENCY (EMAIL)" required>
+                <textarea rows="3" placeholder="MESSAGE..." required></textarea>
+                <button type="submit" class="arcade-btn">SEND TRANSMISSION</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 GameChangersIndia & Desi Woofs Studios. Coded with pixel passion.</p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

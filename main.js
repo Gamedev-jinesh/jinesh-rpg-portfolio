@@ -1,208 +1,501 @@
-// ==========================================
-// AUDIO SYNTHESIZER & BROWSER POLICY MANAGER
-// ==========================================
-let audioCtx;
+// =========================
+// PRELOADER
+// =========================
 
-// Initialize AudioContext only after the user clicks to bypass browser autoplay restrictions
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-}
+const preloader = document.getElementById("preloader");
+const loadingFill = document.querySelector(".loading-fill");
+const loadingText = document.getElementById("loading-text");
 
-function playTone(freq, type, duration) {
-    if (!audioCtx) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    osc.type = type; 
-    osc.frequency.value = freq;
-    
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-    
-    osc.connect(gain); 
-    gain.connect(audioCtx.destination);
-    
-    osc.start(); 
-    osc.stop(audioCtx.currentTime + duration);
-}
+const loadingMessages = [
+  "Initializing Portfolio...",
+  "Loading Assets...",
+  "Spawning Characters...",
+  "Loading Games...",
+  "Entering Studio..."
+];
 
-function playRetroCoinChirp() {
-    playTone(523.25, "square", 0.1); 
-    setTimeout(() => playTone(659.25, "square", 0.1), 100); 
-    setTimeout(() => playTone(783.99, "square", 0.15), 200); 
-    setTimeout(() => playTone(1046.50, "square", 0.3), 350); 
-}
+let progress = 0;
+let messageIndex = 0;
 
-function playRetroConfirmSound() {
-    playTone(300, "sawtooth", 0.08);
-    setTimeout(() => playTone(600, "sawtooth", 0.12), 80);
-}
+const preloadInterval = setInterval(() => {
+  progress += Math.random() * 18;
 
-// ==========================================
-// RPG XP DYNAMIC LEVEL ENGINE 
-// ==========================================
-let playerXP = parseInt(localStorage.getItem('jinesh_portfolio_xp')) || 0;
-let unlockedNodes = new Set(JSON.parse(localStorage.getItem('jinesh_portfolio_inv')) || []);
-const totalUnlockableNodes = 8; // Total main overworld nodes
+  if (progress > 100) {
+    progress = 100;
+  }
 
-// Update UI Progress Bar
-function updateXPBar() {
-    const currentProg = (unlockedNodes.size / totalUnlockableNodes) * 100;
-    const xpFill = document.getElementById("xp-fill");
-    const xpCounter = document.getElementById("xp-counter");
-    
-    if (xpFill) xpFill.style.width = `${currentProg}%`;
-    if (xpCounter) xpCounter.innerText = `${Math.round(currentProg)}%`;
-}
+  loadingFill.style.width = progress + "%";
 
-// Load Saved State on Page Load
-window.addEventListener('load', () => {
-    unlockedNodes.forEach(nodeId => {
-       const node = document.getElementById(nodeId);
-       if(node) {
-           node.innerText = "UNLOCKED";
-           node.className = "node-status unlocked-status";
-           if (node.parentElement) node.parentElement.classList.add("unlocked");
-       }
-    });
-    updateXPBar(); // Safe execution
+  if (progress > messageIndex * 25) {
+    loadingText.innerText =
+      loadingMessages[
+        Math.min(
+          messageIndex,
+          loadingMessages.length - 1
+        )
+      ];
+
+    messageIndex++;
+  }
+
+  if (progress === 100) {
+    clearInterval(preloadInterval);
+
+    setTimeout(() => {
+      preloader.style.opacity = "0";
+      preloader.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        preloader.remove();
+      }, 700);
+    }, 600);
+  }
+}, 200);
+
+// =========================
+// CUSTOM CURSOR
+// =========================
+
+const cursor = document.querySelector(".cursor");
+const outline = document.querySelector(".cursor-outline");
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+
+  cursor.style.left = mouseX + "px";
+  cursor.style.top = mouseY + "px";
 });
 
-// ==========================================
-// OVERWORLD INTERACTIONS & NAVIGATION
-// ==========================================
+function animateCursor() {
+  outline.style.left = mouseX - 20 + "px";
+  outline.style.top = mouseY - 20 + "px";
 
-// Start button: Initializes audio, plays sound, hides start screen
-document.getElementById('start-btn').addEventListener('click', () => {
-    initAudio(); 
-    playRetroCoinChirp();
-    
-    const startScreen = document.getElementById('start-screen');
-    const mainHub = document.getElementById('main-hub');
-    
-    if (startScreen) startScreen.classList.add('hidden');
-    if (mainHub) mainHub.classList.remove('hidden');
+  requestAnimationFrame(animateCursor);
+}
+
+animateCursor();
+
+// =========================
+// HOVER EFFECT
+// =========================
+
+document.querySelectorAll(
+  "a, button, .game-card, img"
+).forEach((item) => {
+  item.addEventListener("mouseenter", () => {
+    outline.style.transform = "scale(1.8)";
+    outline.style.borderColor = "#ff5a1f";
+  });
+
+  item.addEventListener("mouseleave", () => {
+    outline.style.transform = "scale(1)";
+    outline.style.borderColor =
+      "rgba(255,90,31,.5)";
+  });
 });
 
-// Add click sounds to all interactive UI elements
-document.addEventListener('click', (e) => {
-    if (e.target.closest('.level-node, .social-icon, .arcade-btn, .arcade-btn-alt, .arcade-btn-small, .close-btn, .game-card, .gal-item, .cert-item')) {
-        initAudio();
-        playRetroConfirmSound();
-    }
-});
+// =========================
+// STATS COUNTER
+// =========================
 
-// Experience & Progression Logic
-function unlockSectionProgression(nodeId) {
-    const node = document.getElementById(nodeId);
-    if (node && node.innerText === "LOCKED") {
-        node.innerText = "UNLOCKED";
-        node.className = "node-status unlocked-status";
-        node.parentElement.classList.add("unlocked");
-        
-        unlockedNodes.add(nodeId);
-        
-        // Save to local storage
-        localStorage.setItem('jinesh_portfolio_inv', JSON.stringify(Array.from(unlockedNodes)));
-        
-        playerXP += 1250;
-        localStorage.setItem('jinesh_portfolio_xp', playerXP);
+const counters =
+  document.querySelectorAll("[data-count]");
 
-        updateXPBar();
+function runCounters() {
+  counters.forEach((counter) => {
+    const target = +counter.dataset.count;
 
-        if (unlockedNodes.size >= totalUnlockableNodes) {
-            setTimeout(() => {
-                alert("QUEST LOG CLEARED! LEVEL CAP REACHED! You've unlocked the ultimate achievement.");
-            }, 500); // Slight delay so the bar updates first
+    const update = () => {
+      let current =
+        +counter.innerText.replace(/\D/g, "");
+
+      const increment = target / 100;
+
+      if (current < target) {
+        counter.innerText =
+          Math.ceil(current + increment);
+
+        requestAnimationFrame(update);
+      } else {
+        if (target >= 1000000) {
+          counter.innerText = "1M+";
+        } else if (target >= 1000) {
+          counter.innerText =
+            target.toLocaleString() + "+";
+        } else {
+          counter.innerText = target;
         }
-    }
+      }
+    };
+
+    update();
+  });
 }
 
-// Triggered when clicking a main grid node
-function activateSection(nodeId, modalId) {
-    unlockSectionProgression(nodeId);
-    openModal(modalId);
-}
+const statSection =
+  document.querySelector(".stats");
 
-// Triggered when clicking a quest inside the quest board
-function unlockAchievement(cardElem) {
-    if(!cardElem.classList.contains('completed-quest')) {
-        cardElem.classList.add('completed-quest');
-        initAudio();
-        playRetroCoinChirp(); // Extra rewarding sound for quests
-        alert("ACHIEVEMENT UNLOCKED: QUEST COMPLETED!");
-    }
-}
+let counterStarted = false;
 
-// ==========================================
-// MODAL & LIGHTBOX CONTROLLERS
-// ==========================================
+window.addEventListener("scroll", () => {
+  if (
+    !counterStarted &&
+    statSection.getBoundingClientRect().top <
+      window.innerHeight - 100
+  ) {
+    counterStarted = true;
+    runCounters();
+  }
+});
 
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if(modal) {
-        modal.style.display = "block";
-        document.body.style.overflow = "hidden"; // Prevents background scrolling
-    }
-}
+// =========================
+// SCROLL REVEAL
+// =========================
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if(modal) {
-        modal.style.display = "none";
-        document.body.style.overflow = "auto";
-    }
-    
-    // Stop iframe videos from continuing to play in the background when modal is closed
-    const iframe = modal.querySelector('iframe');
-    if (iframe) {
-        const src = iframe.src;
-        iframe.src = src; // Reloads the iframe, stopping the video
-    }
-}
-
-// Sub-menus (Like individual game profiles)
-function openSubMenu(subId) { openModal(subId); }
-function closeSubMenu(subId) { closeModal(subId); }
-
-// Picture-in-Picture Lightbox
-function openLightbox(imgSrc) {
-    const lightbox = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    if (img) img.src = imgSrc;
-    if (lightbox) {
-        lightbox.style.display = "block";
-        document.body.style.overflow = "hidden";
-    }
-}
-
-function closeLightbox() {
-    const lightbox = document.getElementById('lightbox-modal');
-    if(lightbox) {
-        lightbox.style.display = "none";
-        document.body.style.overflow = "auto";
-    }
-}
-
-// Global failsafe: clicking the dark overlay closes the active modal
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal') && 
-        !event.target.classList.contains('sub-modal') && 
-        !event.target.classList.contains('lightbox-backdrop')) {
-        
-        event.target.style.display = "none";
-        document.body.style.overflow = "auto";
-        
-        // Stop background videos
-        const iframe = event.target.querySelector('iframe');
-        if (iframe) {
-            const src = iframe.src;
-            iframe.src = src; 
+const observer =
+  new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add(
+            "show"
+          );
         }
+      });
+    },
+    {
+      threshold: 0.15
     }
+  );
+
+document
+  .querySelectorAll(
+    ".section, .game-card, .timeline-item"
+  )
+  .forEach((el) => {
+    observer.observe(el);
+  });
+
+// =========================
+// PARALLAX HERO
+// =========================
+
+const hero =
+  document.querySelector("#hero");
+
+document.addEventListener(
+  "mousemove",
+  (e) => {
+    const x =
+      (e.clientX /
+        window.innerWidth -
+        0.5) *
+      20;
+
+    const y =
+      (e.clientY /
+        window.innerHeight -
+        0.5) *
+      20;
+
+    hero.style.transform =
+      `translate(${x}px, ${y}px)`;
+  }
+);
+
+// =========================
+// NAVBAR BACKGROUND
+// =========================
+
+const header =
+  document.querySelector(".header");
+
+window.addEventListener(
+  "scroll",
+  () => {
+    if (window.scrollY > 100) {
+      header.style.background =
+        "rgba(7,7,12,.85)";
+    } else {
+      header.style.background =
+        "rgba(7,7,12,.5)";
+    }
+  }
+);
+
+// =========================
+// MOBILE MENU
+// =========================
+
+const menuBtn =
+  document.getElementById(
+    "menu-btn"
+  );
+
+const navLinks =
+  document.querySelector(
+    ".nav-links"
+  );
+
+menuBtn?.addEventListener(
+  "click",
+  () => {
+    navLinks.classList.toggle(
+      "mobile-active"
+    );
+  }
+);
+
+// =========================
+// GALLERY LIGHTBOX
+// =========================
+
+const galleryImages =
+  document.querySelectorAll(
+    ".gallery-grid img"
+  );
+
+galleryImages.forEach((img) => {
+  img.addEventListener(
+    "click",
+    () => {
+      const lightbox =
+        document.createElement(
+          "div"
+        );
+
+      lightbox.className =
+        "lightbox";
+
+      lightbox.innerHTML = `
+        <img src="${img.src}">
+      `;
+
+      document.body.appendChild(
+        lightbox
+      );
+
+      lightbox.addEventListener(
+        "click",
+        () => {
+          lightbox.remove();
+        }
+      );
+    }
+  );
+});
+
+// =========================
+// XP SYSTEM
+// =========================
+
+let xp =
+  Number(
+    localStorage.getItem(
+      "portfolioXP"
+    )
+  ) || 0;
+
+function gainXP(amount) {
+  xp += amount;
+
+  localStorage.setItem(
+    "portfolioXP",
+    xp
+  );
+
+  showToast(
+    `+${amount} XP`
+  );
 }
+
+document
+  .querySelectorAll(
+    ".game-card"
+  )
+  .forEach((card) => {
+    card.addEventListener(
+      "click",
+      () => gainXP(50)
+    );
+  });
+
+// =========================
+// TOAST
+// =========================
+
+function showToast(text) {
+  const toast =
+    document.createElement(
+      "div"
+    );
+
+  toast.className =
+    "toast";
+
+  toast.innerText = text;
+
+  document.body.appendChild(
+    toast
+  );
+
+  setTimeout(() => {
+    toast.classList.add(
+      "show"
+    );
+  }, 50);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2500);
+}
+
+// =========================
+// CONTACT FORM
+// =========================
+
+const form =
+  document.querySelector(
+    ".contact-form"
+  );
+
+form?.addEventListener(
+  "submit",
+  (e) => {
+    e.preventDefault();
+
+    const btn =
+      form.querySelector(
+        "button"
+      );
+
+    btn.innerText =
+      "Message Sent ✓";
+
+    btn.disabled = true;
+
+    gainXP(100);
+  }
+);
+
+// =========================
+// FLOATING PARTICLES
+// =========================
+
+const canvas =
+  document.createElement(
+    "canvas"
+  );
+
+canvas.id = "particles";
+
+document.body.prepend(
+  canvas
+);
+
+const ctx =
+  canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width =
+    window.innerWidth;
+
+  canvas.height =
+    window.innerHeight;
+}
+
+resizeCanvas();
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x =
+      Math.random() *
+      canvas.width;
+
+    this.y =
+      Math.random() *
+      canvas.height;
+
+    this.radius =
+      Math.random() * 2;
+
+    this.speed =
+      Math.random() * 0.5;
+
+    this.opacity =
+      Math.random() * 0.5;
+  }
+
+  draw() {
+    ctx.beginPath();
+
+    ctx.fillStyle =
+      `rgba(255,90,31,${this.opacity})`;
+
+    ctx.arc(
+      this.x,
+      this.y,
+      this.radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+  }
+
+  update() {
+    this.y -= this.speed;
+
+    if (this.y < 0) {
+      this.reset();
+      this.y =
+        canvas.height;
+    }
+
+    this.draw();
+  }
+}
+
+for (let i = 0; i < 120; i++) {
+  particles.push(
+    new Particle()
+  );
+}
+
+function animateParticles() {
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  particles.forEach((p) =>
+    p.update()
+  );
+
+  requestAnimationFrame(
+    animateParticles
+  );
+}
+
+animateParticles();
+
+console.log(
+  "🎮 Jinesh Portfolio Loaded Successfully"
+);
